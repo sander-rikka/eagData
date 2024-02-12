@@ -205,15 +205,38 @@ if __name__ == '__main__':
         r'D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_4\WaveParam_LTE\web.txt',
         r"D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_4\WaveParam_LTE"]
 
-    allpaths = [peipsipaths, kihnu1paths, bphiiupaths, liivipaths, kihnu2paths, pakrikaadpaths, pakri1paths,
-                pakri2paths, pakri3paths, pakri4paths, pakri5paths, parnu1paths, parnu2paths,
-                gofpaths, sorve1paths, sorve2paths, sorve3paths, ruhnu1paths, ruhnu2paths, ruhnu3paths,
-                ruhnu4paths, sorve1paths, sorve2paths, sorve3paths, sorve4paths, vj1paths, vj2paths, vj3paths, vj4paths]
+    allpaths = {
+        'peipsi': peipsipaths,
+        'kihnu1': kihnu1paths,
+        'kihnu2': kihnu2paths,
+        'bphiiu': bphiiupaths,
+        'liivi': liivipaths,
+        'pakrikaad': pakrikaadpaths,
+        'pakri1': pakri1paths,
+        'pakri2': pakri2paths,
+        'pakri3': pakri3paths,
+        'pakri4': pakri4paths,
+        'pakri5': pakri5paths,
+        'parnu1': parnu1paths,
+        'parnu2': parnu2paths,
+        'soomelaht': gofpaths,
+        'sorve1': sorve1paths,
+        'sorve2': sorve2paths,
+        'sorve3': sorve3paths,
+        'sorve4': sorve4paths,
+        'ruhnu1': ruhnu1paths,
+        'ruhnu2': ruhnu2paths,
+        'ruhnu3': ruhnu3paths,
+        'ruhnu4': ruhnu4paths,
+        'vj1': vj1paths,
+        'vj2': vj2paths,
+        'vj3': vj3paths,
+        'vj4': vj4paths
+    }
 
-    for path in allpaths:
-        # dfparam, dfspec = mat2df(path)
-        # todo: how to get the correct names for files?
-        dfparam.to_csv(f'data/{pathname}_param.csv')
-        dfspec.to_csv(f'data/{pathname}_spec.csv')
-    print('a')
+    for key in allpaths:
+        dfparam, dfspec = mat2df(allpaths[key])
+        dfparam.to_csv(f'data/{key}_param.csv')
+        dfspec.to_csv(f'data/{key}_spec.csv')
+    print('The end!')
 
