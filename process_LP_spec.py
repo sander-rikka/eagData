@@ -3,18 +3,13 @@ import matplotlib.pyplot as plt
 import numpy.ma as ma
 import numpy as np
 import os
+import sys
 import pathlib
 from scipy import io
 
 import pandas as pd
 import re
 import datetime as dt
-
-bphiiupaths = [r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\Web\web.txt",
-               r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_04",
-               r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_05",
-               r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_06",
-               r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_07"]
 
 
 def mat2df(paths):
@@ -25,7 +20,7 @@ def mat2df(paths):
 
         if path.endswith('.txt'):
             webdf = pd.read_csv(paths[0], header=None, sep=' ')
-            meastime = pd.to_datetime(webdf[0]+' ' +webdf[1])
+            meastime = pd.to_datetime(webdf[0] + ' ' + webdf[1])
 
         else:
             data = []  # parameters data
@@ -65,8 +60,160 @@ def mat2df(paths):
 
 
 if __name__ == '__main__':
-    dfparam, dfspec = mat2df(bphiiupaths)
-    dfparam.to_csv('bphiiu_param.csv')
-    dfspec.to_csv('bphiiu_spec.csv')
+    peipsipaths = [
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\Web\Sent\web.txt",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_05\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_06\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_07\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_08\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_09\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_10\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\12-Peipsi\WaveParam_LTE\2022_11\Sent"]
+
+    kihnu1paths = [
+        r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\Web\web.txt",
+        r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\2023_04",
+        r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\2023_05",
+        r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\2023_06",
+        r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\2023_07",
+        r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\2023_08"]
+
+    bphiiupaths = [
+        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\Web\web.txt",
+        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_04",
+        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_05",
+        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_06",
+        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_07"]
+
+    liivipaths = [
+        r"D:\Project_data\2023-eag249\LP_data\23-Liivi\WaveParam_LTE\Web\web.txt",
+        r"D:\Project_data\2023-eag249\LP_data\23-Liivi\WaveParam_LTE\2023_04",
+        r"D:\Project_data\2023-eag249\LP_data\23-Liivi\WaveParam_LTE\2023_05",
+        r"D:\Project_data\2023-eag249\LP_data\23-Liivi\WaveParam_LTE\2023_06",
+        r"D:\Project_data\2023-eag249\LP_data\23-Liivi\WaveParam_LTE\2023_07"]
+
+    kihnu2paths = [
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\Web\web.txt",
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\2023_04\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\2023_05\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\2023_06\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\2023_07\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\2023_08",
+        r"D:\Project_data\2023-eag249\LP_data\Kihnu_2023.04.13\LP_16\WaveParam_LTE\2023_09"]
+
+    pakrikaadpaths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pakri-kaadamisala\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pakri-kaadamisala\2023_10\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri-kaadamisala\2023_11\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri-kaadamisala\2023_12\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri-kaadamisala\2024_01\Sent"]
+
+    pakri1paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.04.21\Pakri_2022.04.21\LP_1\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.04.21\Pakri_2022.04.21\LP_1\WaveParam_LTE\2022_04\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.04.21\Pakri_2022.04.21\LP_1\WaveParam_LTE\2022_05\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.04.21\Pakri_2022.04.21\LP_1\WaveParam_LTE\2022_06\Sent"]
+
+    pakri2paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.06.21\Pakri_2022.06.21\LP_1\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.06.21\Pakri_2022.06.21\LP_1\WaveParam_LTE\2022_06\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.06.21\Pakri_2022.06.21\LP_1\WaveParam_LTE\2022_07\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.06.21\Pakri_2022.06.21\LP_1\WaveParam_LTE\2022_08\Sent"]
+
+    pakri3paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.08.10\LP_1\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.08.10\LP_1\WaveParam_LTE\2022_08\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.08.10\LP_1\WaveParam_LTE\2022_09\Sent"]
+
+    pakri4paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.09.28\LP_1\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.09.28\LP_1\WaveParam_LTE\2022_09\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.09.28\LP_1\WaveParam_LTE\2022_10\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.09.28\LP_1\WaveParam_LTE\2022_11\Sent"]
+
+    pakri5paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.12.29\LP_15\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pakri_2022.04.21_2023.01.17\Pakri_2022.12.29\LP_15"]
+
+    parnu1paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_15\WaveParam_LTE\Web\Sent\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_15\WaveParam_LTE\2022_09\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_15\WaveParam_LTE\2022_10\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_15\WaveParam_LTE\2022_11\Sent"]
+
+    parnu2paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_16\WaveParam_LTE\Web\Sent\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_16\WaveParam_LTE\2022_09\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_16\WaveParam_LTE\2022_10\Sent",
+        r"D:\Project_data\2023-eag249\LP_data\Pärnu_2022_09_13\LP_16\WaveParam_LTE\2022_11\Sent"]
+
+    ruhnu2paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Ruhnu_04.08.2021\LP_2\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Ruhnu_04.08.2021\LP_2\WaveParam_LTE"]
+
+    ruhnu3paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.09.27\LP_3\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.09.27\LP_3\WaveParam_LTE"]
+
+    ruhnu4paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.10.01\LP_2\WaveParam_LTE',
+        r"D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.10.01\LP_2\WaveParam_LTE"]
+
+    ruhnu1paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Ruhnu_28.07.2021\LP_4\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Ruhnu_28.07.2021\LP_4\WaveParam_LTE"]
+
+    gofpaths = [
+        r'D:\Project_data\2023-eag249\LP_data\Soome_laht_2023.10.30\LP_16\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Soome_laht_2023.10.30\LP_16\WaveParam_LTE\2023_10",
+        r"D:\Project_data\2023-eag249\LP_data\Soome_laht_2023.10.30\LP_16\WaveParam_LTE\2023_11"]
+
+    sorve1paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2021.07.27\LP_5\WaveParam_LTE',
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.07.27\LP_5\WaveParam_LTE"]
+
+    sorve2paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2021.11.04\LP_7\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.11.04\LP_7\WaveParam_LTE\2021_11",
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.11.04\LP_7\WaveParam_LTE\2021_12",
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.11.04\LP_7\WaveParam_LTE\2022_01",
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.11.04\LP_7\WaveParam_LTE\2022_02"]
+
+    sorve3paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\Web',
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\2022_02",
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\2022_03",
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\2022_04"]
+
+    sorve4paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2022.04.19 cleaned\Sõrve_2022.04.19\LP_2\WaveParam_LTE\Web\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.04.19 cleaned\Sõrve_2022.04.19\LP_2\WaveParam_LTE\2022_04"]
+
+    vj1paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_1\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_1\WaveParam_LTE"]
+
+    vj2paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_2\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_2\WaveParam_LTE"]
+
+    vj3paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_3\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_3\WaveParam_LTE"]
+
+    vj4paths = [
+        r'D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_4\WaveParam_LTE\web.txt',
+        r"D:\Project_data\2023-eag249\LP_data\Vaana-Joesuu_2020.12.11\Vääna-Jõesuu_2020.12.11\Poi_4\WaveParam_LTE"]
+
+    allpaths = [peipsipaths, kihnu1paths, bphiiupaths, liivipaths, kihnu2paths, pakrikaadpaths, pakri1paths,
+                pakri2paths, pakri3paths, pakri4paths, pakri5paths, parnu1paths, parnu2paths,
+                gofpaths, sorve1paths, sorve2paths, sorve3paths, ruhnu1paths, ruhnu2paths, ruhnu3paths,
+                ruhnu4paths, sorve1paths, sorve2paths, sorve3paths, sorve4paths, vj1paths, vj2paths, vj3paths, vj4paths]
+
+    for path in allpaths:
+        # dfparam, dfspec = mat2df(path)
+        # todo: how to get the correct names for files?
+        dfparam.to_csv(f'data/{pathname}_param.csv')
+        dfspec.to_csv(f'data/{pathname}_spec.csv')
     print('a')
 

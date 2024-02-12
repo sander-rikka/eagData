@@ -11,8 +11,8 @@ from wave_parameters import WaveParameters as WP
 
 
 class FmiDataLoad(object):
-    #datapath = r'D:\Project_data\2023-eag249\FMI_data'
-    datapath = r'C:\Temp'  # for laptop
+    datapath = r'D:\Project_data\2023-eag249\FMI_data'
+    # datapath = r'C:\Temp'  # for laptop
     start_f_ind = 0  # 0.025 Hz
     end_f_ind = 80  # 0.6 Hz
 
@@ -72,12 +72,12 @@ class FmiDataLoad(object):
         return pd.DataFrame(params.T, columns=['hs', 'tp', 'tm01', 'tm_10', 'tm02', 'fm', 'wm'], index=self.time)
 
     def save_vars_csv(self):
-        self.S.to_csv(f'spec1D_{self.stationname}')
-        self.bulk_params.to_csv(f'bulkparams_{self.stationname}')
-        if not self.D:
-            self.D.to_csv(f'specdir_{self.stationname}')
-        if not self.SPR:
-            self.SPR.to_csv(f'specspr_{self.stationname}')
+        self.S.to_csv(f'spec1D_{self.stationname}.csv')
+        self.bulk_params.to_csv(f'bulkparams_{self.stationname}.csv')
+        if self.D is not None:
+            self.D.to_csv(f'specdir_{self.stationname}.csv')
+        if self.SPR is not None:
+            self.SPR.to_csv(f'specspr_{self.stationname}.csv')
 
     def get_available_files(self) -> list:
         files = os.listdir(FmiDataLoad.datapath)
@@ -85,7 +85,10 @@ class FmiDataLoad(object):
         for file in files:
             if file.startswith(self.stationname):
                 available_files.append(file)
-        return available_files
+        if not available_files:
+            raise ValueError(f'empty list for available files. check the input path. current value {self.datapath}.')
+        else:
+            return available_files
 
     @staticmethod
     def validate_param_names(params):
@@ -99,10 +102,10 @@ class FmiDataLoad(object):
 
     @staticmethod
     def validate_station_name(station):
-        if station in ['BS', 'NBP', 'GOF']:
+        if station in ['BS', 'NBP', 'GoF']:
             return True
         else:
-            raise ValueError(f'Not valid stationname, expected BS, NBP, GOF. Got {station}')
+            raise ValueError(f'Not valid stationname, expected BS, NBP, GoF. Got {station}')
 
     @staticmethod
     def valid_params(param):
@@ -115,10 +118,14 @@ class FmiDataLoad(object):
 if __name__ == '__main__':
     BS = FmiDataLoad('BS', ['S'])
     BS.load_vars_into_df()
+    BS.save_vars_csv()
 
-    dset = nc.Dataset(r'C:\Temp\BS_2016.nc')
-    hs = ma.getdata(dset['Hs'][:])
-    print(np.corrcoef(BS.bulk_params['hs'].values[0:14636], hs))
-    print(np.mean(BS.bulk_params['hs'].values[0:14636]) - np.mean(hs))
+    NBP = FmiDataLoad('NBP', ['S'])
+    NBP.load_vars_into_df()
+    NBP.save_vars_csv()
 
-    print('a')
+    GOF = FmiDataLoad('GoF', ['S'])
+    GOF.load_vars_into_df()
+    GOF.save_vars_csv()
+
+    print('The end!')
