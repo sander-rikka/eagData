@@ -12,6 +12,27 @@ import re
 import datetime as dt
 
 
+def addorremovetime(meastime, control_len: int):
+    timediffmaxloc = np.argmax(np.diff(meastime))
+    if meastime.shape[0] < control_len:
+        # tuleb üks väärtus juurde panna
+        timetoinsert = meastime.iloc[timediffmaxloc] + np.diff(meastime)[0]
+        df_temp = pd.concat([pd.Series(meastime.iloc[:timediffmaxloc + 1]),
+                             pd.Series(timetoinsert),
+                             pd.Series(meastime.iloc[timediffmaxloc + 1:])]).reset_index(drop=True)
+        # meastime.iloc[timediffmaxloc] = meastime.iloc[timediffmaxloc-1] + np.diff(meastime)[0]
+        meastime = df_temp.copy()
+    else:
+        meastime = meastime.drop(index=[timediffmaxloc])
+
+    try:
+        assert meastime.shape[0] == control_len
+    except AssertionError:
+        meastime = addorremovetime(meastime, control_len)
+
+    return meastime
+
+
 def mat2df(paths):
     df_param = pd.DataFrame()
     df_spec = pd.DataFrame()
@@ -19,7 +40,7 @@ def mat2df(paths):
     for path in paths:
 
         if path.endswith('.txt'):
-            webdf = pd.read_csv(paths[0], header=None, sep=' ')
+            webdf = pd.read_csv(path, header=None, sep=' ')
             meastime = pd.to_datetime(webdf[0] + ' ' + webdf[1])
 
         else:
@@ -44,6 +65,12 @@ def mat2df(paths):
             # specdata = np.array(specdata).T.reshape(np.array(specdata).shape[1], np.array(specdata).shape[0])
             df_spec = pd.concat([df_spec, pd.DataFrame(specarr)], axis=0)
             # print(df_spec.shape)
+
+    # test if meastime and df_spec have same number of rows
+    try:
+        assert meastime.shape[0] == df_param.shape[0]
+    except AssertionError:
+        meastime = addorremovetime(meastime, df_param.shape[0])
 
     df_param.columns = mat['lp_param'].dtype.names[:-1]
     df_param.set_index(meastime, inplace=True, drop=True)
@@ -79,11 +106,11 @@ if __name__ == '__main__':
         r"D:\Project_data\2023-eag249\LP_data\14-Kihnu\WaveParam_LTE\2023_08"]
 
     bphiiupaths = [
-        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\Web\web.txt",
-        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_04",
-        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_05",
-        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_06",
-        r"C:\Users\sander.rikka\OneDrive - Tallinna Tehnikaülikool\Projektid\2023-eag249\Lainepoiss\21-BP-Hiiumaa\2023_07"]
+        r"D:\Project_data\2023-eag249\LP_data\21-BP-Hiiumaa\Web\web.txt",
+        r"D:\Project_data\2023-eag249\LP_data\21-BP-Hiiumaa\2023_04",
+        r"D:\Project_data\2023-eag249\LP_data\21-BP-Hiiumaa\2023_05",
+        r"D:\Project_data\2023-eag249\LP_data\21-BP-Hiiumaa\2023_06",
+        r"D:\Project_data\2023-eag249\LP_data\21-BP-Hiiumaa\2023_07"]
 
     liivipaths = [
         r"D:\Project_data\2023-eag249\LP_data\23-Liivi\WaveParam_LTE\Web\web.txt",
@@ -156,7 +183,7 @@ if __name__ == '__main__':
         r"D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.09.27\LP_3\WaveParam_LTE"]
 
     ruhnu4paths = [
-        r'D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.10.01\LP_2\WaveParam_LTE',
+        r'D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.10.01\LP_2\WaveParam_LTE\web.txt',
         r"D:\Project_data\2023-eag249\LP_data\Ruhnu_2021.10.01\LP_2\WaveParam_LTE"]
 
     ruhnu1paths = [
@@ -169,7 +196,7 @@ if __name__ == '__main__':
         r"D:\Project_data\2023-eag249\LP_data\Soome_laht_2023.10.30\LP_16\WaveParam_LTE\2023_11"]
 
     sorve1paths = [
-        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2021.07.27\LP_5\WaveParam_LTE',
+        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2021.07.27\LP_5\WaveParam_LTE\web.txt',
         r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.07.27\LP_5\WaveParam_LTE"]
 
     sorve2paths = [
@@ -180,7 +207,7 @@ if __name__ == '__main__':
         r"D:\Project_data\2023-eag249\LP_data\Sõrve_2021.11.04\LP_7\WaveParam_LTE\2022_02"]
 
     sorve3paths = [
-        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\Web',
+        r'D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\Web\web.txt',
         r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\2022_02",
         r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\2022_03",
         r"D:\Project_data\2023-eag249\LP_data\Sõrve_2022.02.23\LP_4\WaveParam_LTE\2022_04"]
@@ -235,6 +262,7 @@ if __name__ == '__main__':
     }
 
     for key in allpaths:
+        print(f'Processing the files from {key} station.')
         dfparam, dfspec = mat2df(allpaths[key])
         dfparam.to_csv(f'data/{key}_param.csv')
         dfspec.to_csv(f'data/{key}_spec.csv')
