@@ -116,15 +116,15 @@ class FmiDataLoad(object):
 
 
 if __name__ == '__main__':
-    BS = FmiDataLoad('BS', ['S'])
-    BS.load_vars_into_df()
-    BS.save_vars_csv()
+    # BS = FmiDataLoad('BS', ['S'])
+    # BS.load_vars_into_df()
+    # BS.save_vars_csv()
+    #
+    # NBP = FmiDataLoad('NBP', ['S'])
+    # NBP.load_vars_into_df()
+    # NBP.save_vars_csv()
 
-    NBP = FmiDataLoad('NBP', ['S'])
-    NBP.load_vars_into_df()
-    NBP.save_vars_csv()
-
-    GOF = FmiDataLoad('GoF', ['S'])
+    GOF = FmiDataLoad('GoF', ['S', 'spr', 'D'])
     GOF.load_vars_into_df()
     GOF.save_vars_csv()
 
