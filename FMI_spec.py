@@ -41,6 +41,7 @@ class FmiDataLoad(object):
                 self.D = self.load_param(param)
 
     def load_param(self, param) -> pd.DataFrame:
+        print(f'Loading parameter {param} for {self.stationname}')
         df = pd.DataFrame()
         for file in self.available_files:
             dset = nc.Dataset(os.path.join(FmiDataLoad.datapath, file))
@@ -52,12 +53,28 @@ class FmiDataLoad(object):
             df = pd.concat([df, df_i], axis=0)
 
         df = df.replace(to_replace=-9., value=sys.float_info.epsilon)
+        df["Datetime"] = pd.to_datetime(df.index.tolist())
+        df.set_index("Datetime", inplace=True)
+
+        # filter for half hour data
+        df = df[(df.index.minute < 25) | (df.index.minute > 30)]
+        df.reset_index(inplace=True)
+
+        df['Datetime'] = df['Datetime'].dt.round("h")
         # assumption that all the Frequency values between files are the same.. should check
         f = dset['F']  # takes F from last file
         self.F = ma.getdata(f[:][FmiDataLoad.start_f_ind:FmiDataLoad.end_f_ind, 0])
-        self.time = df.index.values
+
         f_str = [str(x) for x in f[:][FmiDataLoad.start_f_ind:FmiDataLoad.end_f_ind, 0]]
-        df.columns = f_str
+        # append frequency values as heading for dataframe
+        df.columns = [col if i < 1 else f_str[i - 1] for i, col in enumerate(df.columns)]
+        # df.columns = f_str
+
+        # Drop duplicates based on the rounded 'Datetime'
+        df = df.drop_duplicates(subset="Datetime", keep="first")
+
+        df.set_index("Datetime", inplace=True)
+        self.time = df.index.values
         return df
 
     def calculate_bulk_params(self) -> pd.DataFrame:
@@ -72,12 +89,16 @@ class FmiDataLoad(object):
         return pd.DataFrame(params.T, columns=['hs', 'tp', 'tm01', 'tm_10', 'tm02', 'fm', 'wm'], index=self.time)
 
     def save_vars_csv(self):
-        self.S.to_csv(f'spec1D_{self.stationname}.csv')
-        self.bulk_params.to_csv(f'bulkparams_{self.stationname}.csv')
+        if self.stationname == 'BS':
+            self.stationname = 'BOT'
+
+        print(f'Saving data for {self.stationname}')
+        self.S.to_csv(f'FMI_{self.stationname.lower()}_spec.csv')
+        # self.bulk_params.to_csv(f'FMI_{self.stationname.lower()}_bulkparams.csv')
         if self.D is not None:
-            self.D.to_csv(f'specdir_{self.stationname}.csv')
+            self.D.to_csv(f'FMI_{self.stationname.lower()}_mdir.csv')
         if self.SPR is not None:
-            self.SPR.to_csv(f'specspr_{self.stationname}.csv')
+            self.SPR.to_csv(f'FMI_{self.stationname.lower()}_spr.csv')
 
     def get_available_files(self) -> list:
         files = os.listdir(FmiDataLoad.datapath)
@@ -116,13 +137,13 @@ class FmiDataLoad(object):
 
 
 if __name__ == '__main__':
-    # BS = FmiDataLoad('BS', ['S'])
-    # BS.load_vars_into_df()
-    # BS.save_vars_csv()
-    #
-    # NBP = FmiDataLoad('NBP', ['S'])
-    # NBP.load_vars_into_df()
-    # NBP.save_vars_csv()
+    BS = FmiDataLoad('BS', ['S', 'spr', 'D'])
+    BS.load_vars_into_df()
+    BS.save_vars_csv()
+
+    NBP = FmiDataLoad('NBP', ['S', 'spr', 'D'])
+    NBP.load_vars_into_df()
+    NBP.save_vars_csv()
 
     GOF = FmiDataLoad('GoF', ['S', 'spr', 'D'])
     GOF.load_vars_into_df()
